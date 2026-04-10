@@ -1,4 +1,4 @@
-# Listagem de Usuários
+# Desafio Angular - Listagem de Usuários
 
 Projeto desenvolvido como parte de teste técnico. A aplicação permite listar, buscar, cadastrar e editar usuários, com persistência de dados no navegador.
 
@@ -30,4 +30,4 @@ Projeto desenvolvido como parte de teste técnico. A aplicação permite listar,
 
 1. Clone o repositório:
 ```bash
- git clone https://github.com/Jalesol/desafio-usuarios
+git clone https://github.com/Jalesol/Desafio-Angular.git
