@@ -1,0 +1,160 @@
+<div class="users-page">
+  <header class="page-header">
+    <div>
+      <span class="badge">Desafio Angular</span>
+      <h1>Gestão de Usuários</h1>
+      <p>Cadastre, edite e pesquise usuários com uma interface organizada e persistência local.</p>
+    </div>
+
+    <button class="btn btn-primary" type="button" (click)="openCreateModal()">
+      + Novo usuário
+    </button>
+  </header>
+
+  <section class="toolbar">
+    <div class="search-box">
+      <label for="search">Buscar por nome</label>
+      <input
+        id="search"
+        type="text"
+        placeholder="Digite um nome..."
+        (input)="onSearch($event)"
+      />
+    </div>
+
+    @if (isLoading) {
+      <div class="loading-inline">
+        <div class="spinner small-spinner"></div>
+        <span>Atualizando usuários...</span>
+      </div>
+    }
+  </section>
+
+  @if (hasError) {
+    <section class="feedback error-box">
+      <h3>Ocorreu um erro</h3>
+      <p>{{ errorMessage }}</p>
+      <button class="btn btn-secondary" type="button" (click)="loadUsers()">
+        Tentar novamente
+      </button>
+    </section>
+  }
+
+  @if (!hasError) {
+    <section class="cards-grid">
+      @for (user of filteredUsers; track user.id) {
+        <article class="user-card">
+          <div class="card-top">
+            <div class="avatar">
+              {{ user.name.charAt(0) }}
+            </div>
+
+            <button class="btn btn-edit" type="button" (click)="openEditModal(user)">
+              Editar
+            </button>
+          </div>
+
+          <div class="card-content">
+            <h2>{{ user.name }}</h2>
+            <p><strong>E-mail:</strong> {{ user.email }}</p>
+            <p><strong>CPF:</strong> {{ user.cpf }}</p>
+            <p><strong>Telefone:</strong> {{ user.phone }}</p>
+            <p><strong>Tipo:</strong> {{ user.phoneType }}</p>
+          </div>
+        </article>
+      }
+
+      @if (filteredUsers.length === 0 && !isLoading) {
+        <div class="empty-state">
+          <h3>Nenhum usuário encontrado</h3>
+          <p>Tente pesquisar outro nome.</p>
+        </div>
+      }
+    </section>
+  }
+
+  @if (isModalOpen) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <span class="badge">{{ editingUser ? 'Edição' : 'Cadastro' }}</span>
+            <h2>{{ editingUser ? 'Editar usuário' : 'Novo usuário' }}</h2>
+          </div>
+
+          <button class="close-btn" type="button" (click)="closeModal()">×</button>
+        </div>
+
+        <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="user-form">
+          <div class="form-group">
+            <label for="name">Nome</label>
+            <input id="name" type="text" formControlName="name" placeholder="Nome completo" />
+            @if (nameControl?.touched && nameControl?.errors?.['required']) {
+              <small class="error-text">O nome é obrigatório.</small>
+            }
+            @if (nameControl?.touched && nameControl?.errors?.['minlength']) {
+              <small class="error-text">O nome deve ter pelo menos 3 caracteres.</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" formControlName="email" placeholder="email@exemplo.com" />
+            @if (emailControl?.touched && emailControl?.errors?.['required']) {
+              <small class="error-text">O e-mail é obrigatório.</small>
+            }
+            @if (emailControl?.touched && emailControl?.errors?.['email']) {
+              <small class="error-text">Digite um e-mail válido.</small>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cpf">CPF</label>
+              <input id="cpf" type="text" formControlName="cpf" placeholder="Somente números" />
+              @if (cpfControl?.touched && cpfControl?.errors?.['required']) {
+                <small class="error-text">O CPF é obrigatório.</small>
+              }
+              @if (cpfControl?.touched && cpfControl?.errors?.['pattern']) {
+                <small class="error-text">O CPF deve ter 11 números.</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Telefone</label>
+              <input id="phone" type="text" formControlName="phone" placeholder="Somente números" />
+              @if (phoneControl?.touched && phoneControl?.errors?.['required']) {
+                <small class="error-text">O telefone é obrigatório.</small>
+              }
+              @if (phoneControl?.touched && phoneControl?.errors?.['pattern']) {
+                <small class="error-text">O telefone deve ter 10 ou 11 números.</small>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phoneType">Tipo de telefone</label>
+            <select id="phoneType" formControlName="phoneType">
+              <option value="Celular">Celular</option>
+              <option value="Residencial">Residencial</option>
+              <option value="Comercial">Comercial</option>
+            </select>
+            @if (phoneTypeControl?.touched && phoneTypeControl?.errors?.['required']) {
+              <small class="error-text">Selecione o tipo de telefone.</small>
+            }
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn btn-secondary" type="button" (click)="closeModal()">
+              Cancelar
+            </button>
+
+            <button class="btn btn-primary" type="submit" [disabled]="userForm.invalid">
+              Salvar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>
